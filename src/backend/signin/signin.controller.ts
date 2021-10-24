@@ -94,6 +94,7 @@ export class SigninController {
       });
       const signUp = !user ? false : user.name ? true : false;
       const newUser = user ? user : await this.usersService.createUser({ snsId, snsType, email } as User);
+
       const { accessToken, refreshToken } = await this.SigninService.createToken(newUser);
       return {
         status: HttpStatus.CREATED,

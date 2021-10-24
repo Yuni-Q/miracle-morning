@@ -8,7 +8,7 @@ import { consoleError } from '../../utils/log';
 
 export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
   try {
-    const HOST = process.env.NODE_ENV === 'production' ? 'https://moti.company' : 'http://localhost:8000';
+    const HOST = process.env.NODE_ENV === 'production' ? 'https://miracle-morning.herokuapp.com' : 'http://localhost:8000';
     const oauth2Client = new google.auth.OAuth2(process.env.CLIENT_ID, process.env.CLIENT_SECRET, `${HOST}/api/google`);
     const qs = new url.URL(req.url || '', HOST).searchParams;
     const code = qs.get('code');

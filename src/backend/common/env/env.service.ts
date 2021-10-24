@@ -3,7 +3,6 @@ import * as fs from 'fs';
 import * as dotenv from 'dotenv';
 
 export interface EnvData {
-  APP_ENV: string;
   AWSAccessKeyId: string;
   AWSSecretKey: string;
   buket: string;
@@ -15,7 +14,10 @@ export interface EnvData {
   DSN: string;
   DATABASE: string;
   PORT: number;
-  MongoSecretKey: string;
+  MONGODB_URI: string;
+
+  APP_ENV: string;
+  DB_PORT: string;
 }
 
 export class EnvService {
@@ -23,9 +25,7 @@ export class EnvService {
 
   constructor() {
     const environment = process.env.NODE_ENV || 'development';
-    const data: any = dotenv.parse(fs.readFileSync(`.env`));
-    console.log({ data });
-
+    const data = dotenv.parse(fs.readFileSync(`.env`)) as unknown as EnvData;
     // const data: any = dotenv.parse(fs.readFileSync(`${environment}.env`));
 
     data.APP_ENV = environment;

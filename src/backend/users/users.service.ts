@@ -24,8 +24,8 @@ export class UsersService {
     return [...users];
   }
 
-  async getUserById({ id }: { id: number }): Promise<User> {
-    const user = await this.userModel.findById(id).exec();
+  async getUserById({ _id }: { _id: number }): Promise<User> {
+    const user = await this.userModel.findOne({ _id }).exec();
     return user;
   }
 
@@ -40,7 +40,7 @@ export class UsersService {
   }
 
   async updateMyInfo(body): Promise<User> {
-    const user = await this.userModel.findById(body.id).exec();
+    const user = await this.userModel.findOne({ _id: body._id }).exec();
     const editUser = user.save();
     return editUser;
   }
@@ -52,8 +52,8 @@ export class UsersService {
     }
   }
 
-  async checkUser({ id }: { id: number }): Promise<User> {
-    const user = await this.getUserById({ id });
+  async checkUser({ _id }: { _id: number }): Promise<User> {
+    const user = await this.getUserById({ _id });
     if (!user) {
       throw new InvalidUserIdException();
     }
@@ -61,7 +61,7 @@ export class UsersService {
   }
 
   async updateUser(body): Promise<User> {
-    const user = await this.userModel.findById(body.id).exec();
+    const user = await this.userModel.findOne({ _id: body._id }).exec();
     const editUser = user.save();
     return editUser;
   }

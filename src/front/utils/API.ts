@@ -43,7 +43,8 @@ export interface APIGatewayResponse<T> {
 export default class API<EXTRA = {}> {
   public static SERVER_TIME_GAP = 0;
 
-  public static HOSTNAME = process.env.NODE_ENV === 'production' ? 'https://moti.company' : 'http://localhost:8000';
+  public static HOSTNAME =
+    process.env.NODE_ENV === 'production' ? 'https://miracle-morning.herokuapp.com' : 'http://localhost:8000';
 
   public static HEADERS: { [key: string]: any } = {};
 
@@ -182,7 +183,7 @@ export default class API<EXTRA = {}> {
             const { req } = opt?.extra as any;
             const token = await Cookie.getRefreshToken(req);
             const tokenResult = await axios.post(
-              'https://moti.company/api/v1/signin/refresh',
+              'https://miracle-morning.herokuapp.com/api/v1/signin/refresh',
               {},
               {
                 headers: { Authorization: token },

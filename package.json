@@ -9,7 +9,7 @@
     "prebuild": "rimraf dist src/front/.next",
     "build": "nest build && cd src/front && next build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "nest start",
+    "start": "node ./dist/main.js",
     "pm2": "npx pm2 kill && NODE_ENV=production npx pm2 start ./dist/main.js",
     "start:dev-backup": "nest start --watch",
     "start:dev": "nest build --webpack --webpackPath webpack-hmr.config.js --watch",

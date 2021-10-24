@@ -72,7 +72,7 @@ export class UsersController {
   @Get('my')
   async getMyInfo(@TokenUserId() userId: number): Promise<UserDto> {
     try {
-      const user = await this.usersService.getUserById({ id: userId });
+      const user = await this.usersService.getUserById({ _id: userId });
       return { data: user };
     } catch (error) {
       throw new CustomInternalServerErrorException(error.message, error.status, error.statusCode);
@@ -105,7 +105,7 @@ export class UsersController {
     @Id() id: number,
   ): Promise<UserDto> {
     try {
-      const user = await this.usersService.getUserById({ id });
+      const user = await this.usersService.getUserById({ _id: id });
       return { data: user };
     } catch (error) {
       throw new CustomInternalServerErrorException(error.message, error.status, error.statusCode);
@@ -136,7 +136,7 @@ export class UsersController {
   @Put('')
   async updateUser(@TokenUserId() userId, @Body() body: UserBodyDto): Promise<UserDto> {
     try {
-      const user = await this.usersService.checkUser({ id: userId });
+      const user = await this.usersService.checkUser({ _id: userId });
       const newUser = { ...user, ...body };
       const returnUser = await this.usersService.updateMyInfo(newUser);
       return { data: returnUser };
@@ -159,7 +159,7 @@ export class UsersController {
   @Put('refresh')
   async resetRefreshDate(@TokenUserId() userId): Promise<UserDto> {
     try {
-      const user = await this.usersService.checkUser({ id: userId });
+      const user = await this.usersService.checkUser({ _id: userId });
       const newUser = { ...user, refreshDate: null };
       const returnUser = await this.usersService.updateMyInfo(newUser);
       return { data: returnUser };
@@ -182,7 +182,7 @@ export class UsersController {
   @Delete('')
   async deleteUser(@TokenUserId() userId): Promise<DeleteUserDto> {
     try {
-      const user = await this.usersService.checkUser({ id: userId });
+      const user = await this.usersService.checkUser({ _id: userId });
       await this.usersService.deleteUser(user);
       return { data: null };
     } catch (error) {
@@ -219,7 +219,7 @@ export class UsersController {
   async updateProfileUrl(@TokenUserId() userId, @ImageUploader('profile') body): Promise<UserDto> {
     try {
       const { file: profileUrl } = body;
-      const user = await this.usersService.checkUser({ id: userId });
+      const user = await this.usersService.checkUser({ _id: userId });
       const newUser = { ...user, profileUrl: profileUrl };
       const returnUser = await this.usersService.updateMyInfo(newUser);
       return { data: returnUser };

@@ -1,12 +1,12 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import jwt from 'jsonwebtoken';
-import { getRepository } from 'typeorm';
+import { createConnection } from 'mongoose';
 
-import { User } from '../entity/User.entity';
 import { InvalidTokenException } from '../exception/invalid.token.exception';
 import { RequireTokenException } from '../exception/require.token.exception';
+import { User, UserSchema } from '../schemas/user';
 
-export const TokenUserId = createParamDecorator(async (data: unknown, ctx: ExecutionContext): Promise<number> => {
+export const TokenUserId = createParamDecorator(async (data: unknown, ctx: ExecutionContext): Promise<string> => {
   const request = ctx.switchToHttp().getRequest();
   let token = request.headers.authorization as string;
   if (!token) {
@@ -19,7 +19,7 @@ export const TokenUserId = createParamDecorator(async (data: unknown, ctx: Execu
   try {
     result = (await jwt.verify(token, process.env.privateKey as string)) as {
       user: {
-        id: number;
+        _id: number;
       };
     };
   } catch (e) {
@@ -27,13 +27,18 @@ export const TokenUserId = createParamDecorator(async (data: unknown, ctx: Execu
     console.log(e);
     throw new InvalidTokenException();
   }
-  if (typeof result === 'object' && (!('user' in result) || !result.user.id)) {
+
+  if (typeof result === 'object' && (!('user' in result) || !result.user._id)) {
     console.log('token.user.id.decorator token2', token);
     throw new InvalidTokenException();
   }
-  const user = await getRepository(User).findOne({ where: { id: result.user.id } });
-  if (!user?.id) {
+
+  const con = createConnection(process.env.MONGODB_URI);
+  const userModel = con.model(User.name, UserSchema);
+  const user = await userModel.findOne({ _id: result.user._id }).exec();
+
+  if (!user?._id) {
     throw new InvalidTokenException();
   }
-  return result.user.id as number;
+  return result.user._id as string;
 });
