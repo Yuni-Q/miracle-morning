@@ -12,19 +12,18 @@ export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
     const oauth2Client = new google.auth.OAuth2(process.env.CLIENT_ID, process.env.CLIENT_SECRET, `${HOST}/api/google`);
     const qs = new url.URL(req.url || '', HOST).searchParams;
     const code = qs.get('code');
-    console.log(222);
     // eslint-disable-next-line camelcase
     const {
       tokens: { access_token },
     } = await oauth2Client.getToken(code || '');
+
     const result = await axios.post(
       'http://localhost:8000/api/v1/signin',
-      { snsType: 'web' },
+      { snsType: 'google' },
       {
         headers: { Authorization: access_token },
       },
     );
-    console.log(333);
     res.writeHead(301, {
       'Set-Cookie': [
         `token=${result.data.data.accessToken}; Path=/; max-age=604800;`,
@@ -32,7 +31,6 @@ export default async (req: NextApiRequest, res: NextApiResponse): Promise<void> 
       ],
       Location: '/',
     });
-    console.log(444);
     res.end();
   } catch (error) {
     console.log(555, error);

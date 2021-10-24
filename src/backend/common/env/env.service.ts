@@ -15,6 +15,7 @@ export interface EnvData {
   DSN: string;
   DATABASE: string;
   PORT: number;
+  MongoSecretKey: string;
 }
 
 export class EnvService {
@@ -23,6 +24,8 @@ export class EnvService {
   constructor() {
     const environment = process.env.NODE_ENV || 'development';
     const data: any = dotenv.parse(fs.readFileSync(`.env`));
+    console.log({ data });
+
     // const data: any = dotenv.parse(fs.readFileSync(`${environment}.env`));
 
     data.APP_ENV = environment;

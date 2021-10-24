@@ -5,24 +5,29 @@ import { MorganInterceptor, MorganModule } from 'nest-morgan';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { DatabaseModule } from './common/database/database.module';
 import { EnvModule } from './common/env/env.module';
+import { SigninModule } from './signin/signin.module';
+import { UsersModule } from './users/users.module';
 import { ViewsModule } from './views/views.module';
 
-const imports = [ConfigModule.forRoot(), EnvModule, ViewsModule];
+const imports = [ConfigModule.forRoot(), EnvModule, DatabaseModule, SigninModule, UsersModule, ViewsModule];
 if (process.env.NODE_ENV !== 'test') {
   imports.push(MorganModule);
 }
 
-const providers =
-  process.env.NODE_ENV === 'test'
-    ? [AppService]
-    : [
+const providers = [
+  AppService,
+  ...(process.env.NODE_ENV === 'test'
+    ? [
         AppService,
         {
           provide: APP_INTERCEPTOR,
           useClass: MorganInterceptor('combined'),
         },
-      ];
+      ]
+    : []),
+];
 
 @Module({
   imports,
