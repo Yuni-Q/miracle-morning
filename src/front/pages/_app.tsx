@@ -5,10 +5,12 @@ import App from 'next/app';
 import Head from 'next/head';
 import Router from 'next/router';
 import React from 'react';
-import { RecoilRoot } from 'recoil';
+import { RecoilRoot, useRecoilValue } from 'recoil';
 
+import { ErrorBoundary } from '../components/ErrorBoundary';
 import Loading from '../components/Loading';
 import GlobalStyle from '../components/style/GlobalStyle';
+import { DialogStore } from '../store/DialogStore';
 import { log } from '../utils/log';
 
 Router.events.on('routeChangeStart', (url: string) => {
@@ -35,7 +37,6 @@ interface Props {
 
 class MyApp extends App<Props> {
   render(): JSX.Element {
-    const { Component, pageProps = {} } = this.props;
     return (
       <>
         <Head>
@@ -43,13 +44,35 @@ class MyApp extends App<Props> {
         </Head>
         <GlobalStyle />
         <Loading />
-        <RecoilRoot>
-          <Component {...pageProps} />
-        </RecoilRoot>
+        <ErrorBoundary>
+          {/* <Suspense fallback={<Loading />}> */}
+          <RecoilRoot>
+            <MyComponent {...this.props} />
+          </RecoilRoot>
+          {/* </Suspense> */}
+        </ErrorBoundary>
       </>
     );
   }
 }
+
+const MyComponent = ({ Component, pageProps = {} }) => {
+  const value = useRecoilValue(DialogStore);
+  console.log({ value });
+
+  return (
+    <>
+      <Component {...pageProps} />
+      <div className="dialogs">
+        {value.map((v) => {
+          console.log({ v });
+
+          return React.cloneElement(v.jsx, { key: v.key });
+        })}
+      </div>
+    </>
+  );
+};
 
 MyApp.getInitialProps = async (context) => {
   const { res } = context.ctx;

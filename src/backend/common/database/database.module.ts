@@ -6,6 +6,8 @@ import { EnvService } from '../env/env.service';
 
 function DatabaseOrmModule(): DynamicModule {
   const config = new EnvService().read();
+  console.log({ MONGODB_URI: config.MONGODB_URI });
+
   return MongooseModule.forRoot(config.MONGODB_URI);
 }
 
